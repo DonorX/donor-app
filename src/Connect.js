@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { db } from '../lib/firebase';
+import { db } from './lib/firebase';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 const Connect = () => {
     const [detail, setDetail] = useState('');
     //get collection data
-    const [donorsCollection] = useCollectionData(db.collection('donors'));
+    const [donorsCollection] = useCollectionData(db.collection('donors'), {
+        idField: 'sample',
+    });
 
     //get input text
     const handleChange = (e) => setDetail(e.target.value);
     //add text to collection
-    const handleClick = () => {
+    const handleClick = (e) => {
+        e.preventDefault();
         db.collection('donors').add({
             name: detail,
         });
