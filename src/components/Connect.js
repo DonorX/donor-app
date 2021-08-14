@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { db } from './lib/firebase';
+import { db } from '../lib/firebase';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 const Connect = () => {
     const [detail, setDetail] = useState('');
     //get collection data
-    const [donorsCollection] = useCollectionData(db.collection('donors'), {
-        idField: 'sample',
-    });
+    const [donorsCollection] = useCollectionData(db.collection('donors'));
 
     //get input text
     const handleChange = (e) => setDetail(e.target.value);
@@ -15,7 +13,7 @@ const Connect = () => {
     const handleClick = (e) => {
         e.preventDefault();
         db.collection('donors').add({
-            name: detail,
+            name: detail
         });
     }
 
@@ -29,7 +27,7 @@ const Connect = () => {
             <div className="donors">
                 {donorsCollection &&
                     donorsCollection.map((donor) =>
-                        <p>{donor.name}</p>
+                        <li key={donor.id}>{donor.name}</li>
                     )}
             </div>
         </div>

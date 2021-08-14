@@ -1,4 +1,4 @@
-import Connect from './Connect';
+import Connect from './components/Connect';
 import './App.css';
 
 function App() {
