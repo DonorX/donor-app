@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { db } from '../lib/firebase';
 
 const Register = () => {
@@ -12,6 +12,7 @@ const Register = () => {
         rhesus: '',
         password: ''
     });
+    let history = useHistory();
 
     //get input text
     const handleChange = (e) => setDonorDetails({...donorDetails, [e.target.id]: e.target.value});
@@ -27,6 +28,7 @@ const Register = () => {
             rhesus: donorDetails.rhesus,
             password: donorDetails.password
         });
+        history.push('/dashboard');
     }
 
     return (
