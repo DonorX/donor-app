@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { db } from '../lib/firebase';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register = () => {
     const [donorDetails, setDonorDetails] = useState({
@@ -15,20 +16,28 @@ const Register = () => {
     let history = useHistory();
 
     //get input text
-    const handleChange = (e) => setDonorDetails({...donorDetails, [e.target.id]: e.target.value});
+    const handleChange = (e) => setDonorDetails({ ...donorDetails, [e.target.id]: e.target.value });
     //add text to collection
     const handleClick = (e) => {
         e.preventDefault();
-        db.collection('donors').add({
-            name: donorDetails.name,
-            email: donorDetails.email,
-            age: donorDetails.age,
-            genotype: donorDetails.genotype,
-            bloodGroup: donorDetails.group,
-            rhesus: donorDetails.rhesus,
-            password: donorDetails.password
-        });
-        history.push('/dashboard');
+
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, donorDetails.email, donorDetails.password)
+            .then(
+                db.collection('donors').add({
+                    name: donorDetails.name,
+                    email: donorDetails.email,
+                    age: donorDetails.age,
+                    genotype: donorDetails.genotype,
+                    bloodGroup: donorDetails.group,
+                    rhesus: donorDetails.rhesus,
+                })
+            )
+            .then(history.push('/dashboard'))
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
     }
 
     return (
