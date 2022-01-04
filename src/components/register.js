@@ -12,17 +12,16 @@ const Register = () => {
         rhesus: '',
         password: ''
     });
-    let history = useHistory();
-
-    //get input text
+    const history = useHistory();
+  
     const handleChange = (e) => setUser({ ...user, [e.target.id]: e.target.value });
-    //add text to collection
+
     const handleClick = (e) => {
         e.preventDefault();
 
         auth.createUserWithEmailAndPassword(user.email, user.password)
-            .then(
-                db.collection('donors').add({
+            .then((result)=> {
+                db.collection('donors').doc(result.user.uid).set({
                     name: user.name,
                     email: user.email,
                     age: user.age,
@@ -30,7 +29,7 @@ const Register = () => {
                     bloodGroup: user.group,
                     rhesus: user.rhesus,
                 })
-            )
+            })
             .then(history.push('/dashboard'))
             .catch((error) => {
                 const errorCode = error.code;

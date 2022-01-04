@@ -5,23 +5,34 @@ import { db, auth } from '../lib/firebase';
 const Dashboard = () => {
     const [donor, setDonor] = useState({});
     const history = useHistory();
-    const user = auth.currentUser;
 
-    if (user !== null) {
-        const email = user.email;
-        db.collection('donors')
-            .where('email', '==', email)
-            .get()
-            .then((querySnapshot) => {
-                setDonor(querySnapshot.docs[0].data())
-                console.log(donor)
-            })
-    } else {
-        history.push('/login')
+    useEffect(() => {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                const email = user.email;
+                //uid more efficient?
+                db.collection('donors')
+                    .where('email', '==', email)
+                    .get()
+                    .then((querySnapshot) => {
+                        setDonor(querySnapshot.docs[0].data())
+                        console.log(user)
+                    })
+            } else {
+                history.push('/login')
+            }
+        })
+    })
+
+    const handleLogout = () => {
+        auth.signOut();
     }
 
     return (
-        <p>Welcome, User.</p>
+        <div>
+            <p>Welcome, User.</p>
+            <button onClick={handleLogout}>Logout</button>
+        </div>
     )
 }
 

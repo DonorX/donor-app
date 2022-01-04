@@ -7,7 +7,9 @@ const Login = () => {
         email: '',
         password: ''
     });
-    let history = useHistory();
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const history = useHistory();
 
     const handleChange = (e) => setUser({ ...user, [e.target.id]: e.target.value });
 
@@ -19,9 +21,9 @@ const Login = () => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 if (errorCode === 'auth/wrong-password') {
-                    alert('Wrong password.');
+                    setPasswordError(errorMessage);
                 } else if (errorCode === 'auth/user-not-found') {
-                    alert('Incorrect email. Account does not exist.');
+                    setEmailError(errorMessage);
                 } else {
                     alert(errorMessage);
                 }
@@ -32,7 +34,7 @@ const Login = () => {
             if (user) {
                 history.push('/dashboard')
             } else {
-                console.log(user)
+                console.log('not user')
             }
         })
     }
@@ -45,8 +47,10 @@ const Login = () => {
             <form action="">
                 <label htmlFor="email">Email</label>
                 <input type="email" id="email" onChange={handleChange} required aria-required="true" />
+                <p>{emailError}</p>
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" onChange={handleChange} required aria-required="true" />
+                <p>{passwordError}</p>
                 <Link to="/reset-password" className="link light">Forgot Password?</Link>
                 <button onClick={handleClick}>Log In</button>
             </form>
