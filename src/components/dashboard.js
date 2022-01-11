@@ -3,26 +3,34 @@ import { Link, useHistory } from 'react-router-dom';
 import { db, auth } from '../lib/firebase';
 
 const Dashboard = () => {
+    // const [user, setUser] = useState(false);
     const [donor, setDonor] = useState({});
     const history = useHistory();
+
+    // useEffect(() => {
+    //     auth.onAuthStateChanged((user) => {
+    //         if (user) {
+    //             setUser(true)
+    //         } else {
+    //             setUser(false)
+    //         }
+    //     })
+    // }, []);
 
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
             if (user) {
-                const email = user.email;
-                //uid more efficient?
                 db.collection('donors')
-                    .where('email', '==', email)
+                    .where('email', '==', user.email)
                     .get()
                     .then((querySnapshot) => {
                         setDonor(querySnapshot.docs[0].data())
-                        console.log(user)
                     })
             } else {
                 history.push('/login')
             }
         })
-    })
+    }, [donor,history])
 
     const handleLogout = () => {
         auth.signOut();
@@ -30,7 +38,7 @@ const Dashboard = () => {
 
     return (
         <div>
-            <p>Welcome, User.</p>
+            <p>Welcome, {donor.name}.</p>
             <button onClick={handleLogout}>Logout</button>
         </div>
     )
