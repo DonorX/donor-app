@@ -10,7 +10,8 @@ const Register = () => {
         genotype: '',
         group: '',
         rhesus: '',
-        password: ''
+        password: '',
+        location: ''
     });
     const history = useHistory();
   
@@ -28,6 +29,7 @@ const Register = () => {
                     genotype: user.genotype,
                     bloodGroup: user.group,
                     rhesus: user.rhesus,
+                    location: user.location
                 })
             })
             .then(history.push('/dashboard'))
@@ -76,6 +78,9 @@ const Register = () => {
                     <option value="positive">+</option>
                     <option value="negative">-</option>
                 </select>
+
+                <label htmlFor="name">Location</label>
+                <input type="text" id="location" onChange={handleChange} required aria-required="true" />
 
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" onChange={handleChange} required aria-required="true" minLength={6} />

@@ -1,0 +1,60 @@
+[debug] [2022-02-08T19:53:14.689Z] ----------------------------------------------------------------------
+[debug] [2022-02-08T19:53:14.700Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\USER\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2022-02-08T19:53:14.701Z] CLI Version:   10.1.5
+[debug] [2022-02-08T19:53:14.702Z] Platform:      win32
+[debug] [2022-02-08T19:53:14.702Z] Node Version:  v12.18.2
+[debug] [2022-02-08T19:53:16.116Z] Time:          Tue Feb 08 2022 20:53:14 GMT+0100 (West Africa Standard Time)
+[debug] [2022-02-08T19:53:16.117Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-02-08T19:53:17.021Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-02-08T19:53:17.023Z] > authorizing via signed-in user (chenemi2@gmail.com)
+[debug] [2022-02-08T19:53:17.023Z] [iam] checking project donorx-c9bfc for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2022-02-08T19:53:17.407Z] > refreshing access token with scopes: []
+[debug] [2022-02-08T19:53:17.413Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-02-08T19:53:31.622Z] [iam] error while checking permissions, command may fail: FirebaseError: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2022-02-08T19:53:31.625Z] > refreshing access token with scopes: []
+[debug] [2022-02-08T19:53:31.626Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-02-08T19:53:42.106Z] <<< HTTP RESPONSE 200 {"date":"Tue, 08 Feb 2022 19:53:41 GMT","pragma":"no-cache","cache-control":"no-cache, no-store, max-age=0, must-revalidate","expires":"Mon, 01 Jan 1990 00:00:00 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-02-08T19:53:42.475Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/donorx-c9bfc [none]
+[debug] [2022-02-08T19:53:54.572Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects/donorx-c9bfc
+[debug] [2022-02-08T19:53:55.566Z] FirebaseError: Failed to make request to https://firebase.googleapis.com/v1beta1/projects/donorx-c9bfc
+    at RetryOperation._fn (C:\Users\USER\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:240:31)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[error] 
+[error] Error: Failed to get Firebase project donorx-c9bfc. Please make sure the project exists and your account has permission to access it.
+[debug] [2022-02-08T19:59:08.544Z] ----------------------------------------------------------------------
+[debug] [2022-02-08T19:59:08.555Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\USER\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2022-02-08T19:59:08.556Z] CLI Version:   10.1.5
+[debug] [2022-02-08T19:59:08.556Z] Platform:      win32
+[debug] [2022-02-08T19:59:08.557Z] Node Version:  v12.18.2
+[debug] [2022-02-08T19:59:08.561Z] Time:          Tue Feb 08 2022 20:59:08 GMT+0100 (West Africa Standard Time)
+[debug] [2022-02-08T19:59:08.561Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-02-08T19:59:09.255Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-02-08T19:59:09.256Z] > authorizing via signed-in user (chenemi2@gmail.com)
+[debug] [2022-02-08T19:59:09.257Z] [iam] checking project donorx-c9bfc for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2022-02-08T19:59:09.268Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/donorx-c9bfc:testIamPermissions [none]
+[debug] [2022-02-08T19:59:09.269Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/donorx-c9bfc:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-02-08T19:59:16.673Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/donorx-c9bfc:testIamPermissions 200
+[debug] [2022-02-08T19:59:16.674Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/donorx-c9bfc:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-02-08T19:59:16.682Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/donorx-c9bfc [none]
+[debug] [2022-02-08T19:59:17.948Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/donorx-c9bfc 200
+[debug] [2022-02-08T19:59:17.949Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/donorx-c9bfc {"projectId":"donorx-c9bfc","projectNumber":"1087930872477","displayName":"DonorX","name":"projects/donorx-c9bfc","resources":{"hostingSite":"donorx-c9bfc","storageBucket":"donorx-c9bfc.appspot.com","locationId":"us-central"},"state":"ACTIVE"}
+[info] 
+[info] === Deploying to 'donorx-c9bfc'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2022-02-08T19:59:17.976Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2022-02-08T19:59:17.977Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-02-08T19:59:21.693Z] <<< HTTP RESPONSE 200 {"pragma":"no-cache","date":"Tue, 08 Feb 2022 19:59:21 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-02-08T19:59:25.395Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/donorx-c9bfc/versions  
+ {"config":{"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2022-02-08T19:59:40.015Z] Error: getaddrinfo ENOTFOUND firebasehosting.googleapis.com
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:66:26)
+[error] 
+[error] Error: Server Error. getaddrinfo ENOTFOUND firebasehosting.googleapis.com
