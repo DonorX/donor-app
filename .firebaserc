@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "donorx-c9bfc"
-  }
+    "default": "donorx-c9bfc",
+    "donor": "donorx-c9bfc"
+  },
+  "targets": {}
 }
