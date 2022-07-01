@@ -4,6 +4,7 @@ import Home from './components/home';
 import Register from './components/register';
 import Login from './components/login';
 import Dashboard from './components/dashboard';
+import AdminDashboard from './components/adminDashboard';
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Route path="/register" component={Register} exact />
           <Route path="/login" component={Login} exact />
           <Route path="/dashboard" component={Dashboard} exact />
+          <Route path="/admin" component={AdminDashboard} exact />
           <Route component={Error} />
         </Switch>
     </div>
