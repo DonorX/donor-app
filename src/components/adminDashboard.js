@@ -15,20 +15,20 @@ const AdminDashboard = () => {
     const [newRequest, setNewRequest] = useState(false);
     const history = useHistory();
 
-    useEffect(() => {
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                db.collection('admin')
-                    .where('email', '==', user.email)
-                    .get()
-                    .then((querySnapshot) => {
-                        setAdmin(querySnapshot.docs[0].data())
-                    })
-            } else {
-                history.push('/login')
-            }
-        })
-    }, [admin, history])
+    // useEffect(() => {
+    //     auth.onAuthStateChanged((user) => {
+    //         if (user) {
+    //             db.collection('admin')
+    //                 .where('email', '==', user.email)
+    //                 .get()
+    //                 .then((querySnapshot) => {
+    //                     setAdmin(querySnapshot.docs[0].data())
+    //                 })
+    //         } else {
+    //             history.push('/login')
+    //         }
+    //     })
+    // }, [admin, history])
 
     const createRequest = () => {
         setNewRequest(true);
@@ -40,6 +40,7 @@ const AdminDashboard = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        //state change should be final action
         setNewRequest(false);
         //add request to db (plus status)
         //filter viable donors
