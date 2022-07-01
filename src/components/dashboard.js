@@ -58,7 +58,8 @@ const Dashboard = () => {
             <h1>User Profile</h1>
 
             <section className="profile">
-                <h2>Welcome, {donor.name}.</h2>
+                <h2>User Profile</h2>
+                <p>Welcome, {donor.name}.</p>
                 <p>Email: {donor.email}.</p>
                 <p>Age: {donor.age}.</p>
                 <p>Genotype: {donor.genotype}.</p>
