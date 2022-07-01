@@ -55,7 +55,7 @@ const Dashboard = () => {
 
     return (
         <main>
-            <h1>User Profile</h1>
+            <h1>Dashboard</h1>
 
             <section className="profile">
                 <h2>User Profile</h2>
