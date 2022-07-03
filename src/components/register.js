@@ -29,7 +29,8 @@ const Register = () => {
                     genotype: user.genotype,
                     bloodGroup: user.group,
                     rhesus: user.rhesus,
-                    location: user.location
+                    location: user.location,
+                    requests: []
                 })
             })
             .then(history.push('/dashboard'))
