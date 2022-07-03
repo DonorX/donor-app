@@ -25,7 +25,7 @@ const AdminRegister = () => {
                     requests: []
                 })
             })
-            .then(history.push('/adminDashboard'))
+            .then(history.push('/admin'))
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
