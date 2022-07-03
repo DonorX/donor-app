@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from 'react-router-dom';
 import { db, auth } from '../lib/firebase';
+import firebase from 'firebase';
 
 const AdminDashboard = () => {
     const [request, setRequest] = useState({
@@ -8,27 +9,34 @@ const AdminDashboard = () => {
         description: '',
         group: '',
         rhesus: '',
-        expiration: ''
+        expiration: new Date(),
+        isExpired: false
     });
 
     const [admin, setAdmin] = useState({});
+    const [collectionId, setCollectionId] = useState('');
     const [newRequest, setNewRequest] = useState(false);
     const history = useHistory();
 
-    // useEffect(() => {
-    //     auth.onAuthStateChanged((user) => {
-    //         if (user) {
-    //             db.collection('admin')
-    //                 .where('email', '==', user.email)
-    //                 .get()
-    //                 .then((querySnapshot) => {
-    //                     setAdmin(querySnapshot.docs[0].data())
-    //                 })
-    //         } else {
-    //             history.push('/login')
-    //         }
-    //     })
-    // }, [admin, history])
+    useEffect(() => {
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                db.collection('admin')
+                    .where('email', '==', user.email)
+                    .get()
+                    .then((querySnapshot) => {
+                        setAdmin(querySnapshot.docs[0].data())
+                        setCollectionId(querySnapshot.docs[0].id)
+                    })
+            } else {
+                history.push('/login')
+            }
+        })
+    }, [admin, history])
+
+    const editProfile = () => {
+        console.log("Clicked!");
+    }
 
     const createRequest = () => {
         setNewRequest(true);
@@ -38,19 +46,76 @@ const AdminDashboard = () => {
         setRequest({ ...request, [e.target.id]: e.target.value })
     }
 
-    const handleSubmit = (e) => {
+    const sendRequest = (docId) => {
+        db.collection('donors')
+            .doc(docId)
+            .update({
+                requests: firebase.firestore.FieldValue.arrayUnion(request)
+            })
+            .catch((error) => {
+                console.log(error)
+                // throw new Error(error)
+            });
+    }
+
+    const filterDonors = () => {
+        db.collection('donors')
+            .where('bloodGroup', '==', request.group)
+            .where('rhesus', '==', request.rhesus)
+            //filter location too
+            .get()
+            .then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    console.log("No users match your request")
+                } else {
+                    //send out requests
+                    querySnapshot.forEach(doc => {
+                        sendRequest(doc.id)
+                    })
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+                throw new Error(error)
+            });
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        //state change should be final action
+
+        //prevent submission if expiry date is invalid
+        /*const currentDate = new Date();
+        currentDate < request.expiration && setRequest({
+            ...request, isExpired : true 
+        });*/
+
+        //add request to db
+        db.collection('admin')
+            .doc(collectionId)
+            .update({
+                requests: firebase.firestore.FieldValue.arrayUnion(request)
+            })
+            .catch((error) => {
+                console.log(error)
+                throw new Error(error)
+            });
+
+        //filter viable donors and send out requests
+        filterDonors();
+        //remove dialog
         setNewRequest(false);
-        //add request to db (plus status)
-        //filter viable donors
-        //send out requests
     }
 
     return (
         <main>
             <h1>Dashboard</h1>
-            <section className="profile"></section>
+            <section className="profile">
+            <h2>User Profile</h2>
+                <p>Welcome, {admin.name}.</p>
+                <p>Email: {admin.email}.</p>
+                <p>Location: {admin.location}.</p>
+                <button onClick={editProfile}>Edit Profile</button>
+            </section>
 
             <section className="requests">
                 <div className="requests__running">
@@ -60,8 +125,8 @@ const AdminDashboard = () => {
                         <p>Location:</p>
                         <p>Description:</p>
                         <p>Valid until:</p>
-                        <p>Interested Donors:</p>
                         {/*show donor appointments*/}
+                        <p>Interested Donors:</p>
                         {/*confirm due appointments*/}
                     </div>
                     <button onClick={createRequest}>New Request</button>
@@ -72,10 +137,10 @@ const AdminDashboard = () => {
                         <h2>Create New Request</h2>
                         <form action="">
                             <label htmlFor="location">Location</label>
-                            <input type="text" id="location" onChange={handleChange} required aria-required="true"/>
+                            <input type="text" id="location" onChange={handleChange} required aria-required="true" />
 
                             <label htmlFor="description">Description</label>
-                            <input type="text" id="description" onChange={handleChange} required aria-required="true"/>
+                            <input type="text" id="description" onChange={handleChange} required aria-required="true" />
 
                             <label htmlFor="group">Blood Group</label>
                             <select id="group" onChange={handleChange} required aria-required="true">
@@ -94,7 +159,7 @@ const AdminDashboard = () => {
                             </select>
 
                             <label htmlFor="expiration">Expires by</label>
-                            <input type="datetime-local" id="expiration" onChange={handleChange} required aria-required="true"/>
+                            <input type="datetime-local" id="expiration" onChange={handleChange} required aria-required="true" />
                             <button onClick={handleSubmit}>Submit</button>
                         </form>
                     </div>
