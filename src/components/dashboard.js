@@ -5,12 +5,13 @@ import { db, auth } from '../lib/firebase';
 const Dashboard = () => {
     // const [user, setUser] = useState(false);
     const [donor, setDonor] = useState({});
-    const [isExpired, setIsExpired] = useState(false);
     const [isAccepted, setIsAccepted] = useState(false);
     const [isDeclined, setIsDeclined] = useState(false);
+    const [reschedule, setReschedule] = useState(false);
     const [pendingRequests, setPendingRequests] = useState([]);
     const [acceptedRequests, setAcceptedRequests] = useState([]);
     const [completedRequests, setCompletedRequests] = useState([]);
+    const [expiredRequests, setExpiredRequests] = useState(false);
 
     const history = useHistory();
     let index = 0;
@@ -42,6 +43,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         const requests = donor.requests;
+        const currentDate = new Date();
 
         const filterRequests = () => {
             if (requests.length >= 1) {
@@ -61,9 +63,14 @@ const Dashboard = () => {
                     return item.isCompleted === true
                 });
 
+                let expiredArray = requests.filter((item) => {                  
+                    return currentDate > item.expiration;
+                });
+
                 setPendingRequests(pendingArray);
                 setAcceptedRequests(acceptedArray);
                 setCompletedRequests(completedArray);
+                setExpiredRequests(expiredArray);
             }
         }
 
@@ -76,7 +83,6 @@ const Dashboard = () => {
     }
 
     const acceptRequest = () => {
-        //update status in user  and admin db (after date schedule)
         setIsAccepted(true);
     }
 
@@ -84,6 +90,10 @@ const Dashboard = () => {
         setIsDeclined(true);
         //request is removed from dashboard (and db?)
         //update status in user db
+    }
+
+    const scheduleAppointment = () => {
+        if (reschedule === true) { setReschedule(false) }
     }
 
     const handleLogout = () => {
@@ -111,9 +121,6 @@ const Dashboard = () => {
                 <div className="requests__pending">
                     {pendingRequests ? (
                         pendingRequests.map((request) => {
-                            const currentDate = new Date();
-                            currentDate > request.expiration && setIsExpired(true);
-
                             return (
                                 <div className="requests__pending-item" key={index += 1}>
                                     <p>Location:{request.location}</p>
@@ -125,7 +132,15 @@ const Dashboard = () => {
                                         <button onClick={acceptRequest}>Accept</button>
                                         <button onClick={declineRequest}>Decline</button>
                                     </span>
-                                    {/*if accepted, schedule donation date*/}
+                                    {isAccepted && (
+                                        <div className="dialog__schedule">
+                                            <form action="">
+                                                <label htmlFor="book-date">When would you like to make this donation?</label>
+                                                <input type="date" id="book-date" />
+                                                <button onClick={scheduleAppointment}>Schedule Appointment</button>
+                                            </form>
+                                        </div>
+                                    )}
                                 </div>
                             )
                         })
@@ -142,9 +157,19 @@ const Dashboard = () => {
                                 <div className="requests__accepted-item" key={index += 1}>
                                     <p>Location:{request.location}</p>
                                     <p>Description:{request.description}</p>
-                                    <p>Blood Group:{request.group}</p>
-                                    <p>Rhesus:{request.rhesus}</p>
                                     <p>Valid until: {request.expiration}</p>
+                                    <p>Scheduled Donation Date:</p>
+                                    <button onClick={() => setReschedule(true)}>Reschedule</button>
+                                    {reschedule && (
+                                        <div className="dialog__schedule">
+                                            <form action="">
+                                                <label htmlFor="book-date">When would you like to make this donation?</label>
+                                                <input type="date" id="book-date" />
+                                                <button onClick={scheduleAppointment}>Schedule Appointment</button>
+                                            </form>
+                                        </div>
+                                    )}
+
                                     {/*show scheduled date, and option to reschedule/cancel*/}
                                 </div>
                             )
