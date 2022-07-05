@@ -6,6 +6,7 @@ const Dashboard = () => {
     // const [user, setUser] = useState(false);
     const [donor, setDonor] = useState({});
     const history = useHistory();
+    let index = 0;
 
     // useEffect(() => {
     //     auth.onAuthStateChanged((user) => {
@@ -71,16 +72,28 @@ const Dashboard = () => {
 
             <section className="requests">
                 <h2>Pending Requests</h2>
-                {/*map data from firestore*/}
                 <div className="requests__pending">
-                    <p>Location:</p>
-                    <p>Description:</p>
-                    <p>Valid until:</p>
-                    <span className="requests__buttons">
-                        <button onClick={acceptRequest}>Accept</button>
-                        <button onClick={declineRequest}>Decline</button>
-                    </span>
-                    {/*if accepted, schedule donation date*/}
+                    {donor.requests ? (
+                        donor.requests.map((request) => {
+                            return (
+                                <div className="requests__pending-item" key={index += 1}>
+                                    <p>Location:{request.location}</p>
+                                    <p>Description:{request.description}</p>
+                                    <p>Blood Group:{request.group}</p>
+                                    <p>Rhesus:{request.rhesus}</p>
+                                    <p>Valid until: {request.expiration}</p>
+                                    <span className="requests__buttons">
+                                        <button onClick={acceptRequest}>Accept</button>
+                                        <button onClick={declineRequest}>Decline</button>
+                                    </span>
+                                    {/*if accepted, schedule donation date*/}
+                                </div>
+                            )
+                        })
+
+                    ) : (
+                        <p>No requests at the moment</p>
+                    )}
                 </div>
 
                 <div className="requests__accepted">
