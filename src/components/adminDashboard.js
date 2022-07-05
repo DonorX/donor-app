@@ -110,7 +110,7 @@ const AdminDashboard = () => {
         <main>
             <h1>Dashboard</h1>
             <section className="profile">
-            <h2>User Profile</h2>
+                <h2>User Profile</h2>
                 <p>Welcome, {admin.name}.</p>
                 <p>Email: {admin.email}.</p>
                 <p>Location: {admin.location}.</p>
@@ -120,15 +120,25 @@ const AdminDashboard = () => {
             <section className="requests">
                 <div className="requests__running">
                     <h2>Current Requests</h2>
-                    {/*map data from firestore*/}
-                    <div className="requests__running-item">
-                        <p>Location:</p>
-                        <p>Description:</p>
-                        <p>Valid until:</p>
-                        {/*show donor appointments*/}
-                        <p>Interested Donors:</p>
-                        {/*confirm due appointments*/}
-                    </div>
+                    {admin.requests ? (
+                        admin.requests.map((request) => {
+                            return (
+                                <div className="requests__running-item">
+                                    <p>Location:{request.location}</p>
+                                    <p>Description:{request.description}</p>
+                                    <p>Blood Group:{request.group}</p>
+                                    <p>Rhesus:{request.rhesus}</p>
+                                    <p>Valid until: {request.expiration}</p>
+                                    {/*show donor appointments*/}
+                                    <p>Interested Donors:</p>
+                                    {/*confirm due appointments*/}
+                                </div>
+                            )
+                        })
+
+                    ) : (
+                        <p>No requests at the moment</p>
+                    )}
                     <button onClick={createRequest}>New Request</button>
                 </div>
 
