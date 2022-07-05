@@ -5,6 +5,13 @@ import { db, auth } from '../lib/firebase';
 const Dashboard = () => {
     // const [user, setUser] = useState(false);
     const [donor, setDonor] = useState({});
+    const [isExpired, setIsExpired] = useState(false);
+    const [isAccepted, setIsAccepted] = useState(false);
+    const [isDeclined, setIsDeclined] = useState(false);
+    const [pendingRequests, setPendingRequests] = useState([]);
+    const [acceptedRequests, setAcceptedRequests] = useState([]);
+    const [completedRequests, setCompletedRequests] = useState([]);
+
     const history = useHistory();
     let index = 0;
 
@@ -33,21 +40,50 @@ const Dashboard = () => {
         })
     }, [donor, history])
 
+    useEffect(() => {
+        const requests = donor.requests;
+
+        const filterRequests = () => {
+            if (requests.length >= 1) {
+                let pendingArray = requests.filter((item) => {
+                    return item.isExpired === false
+                        && item.isAccepted === false
+                        && item.isCompleted === false
+                });
+
+                let acceptedArray = requests.filter((item) => {
+                    return item.isExpired === false
+                        && item.isAccepted === true
+                        && item.isCompleted === false
+                });
+
+                let completedArray = requests.filter((item) => {
+                    return item.isCompleted === true
+                });
+
+                setPendingRequests(pendingArray);
+                setAcceptedRequests(acceptedArray);
+                setCompletedRequests(completedArray);
+            }
+        }
+
+        filterRequests();
+    }, [donor.requests])
+
+
     const editProfile = () => {
         console.log("Clicked!");
     }
 
     const acceptRequest = () => {
-        console.log("Clicked!");
-        //update status in user db (after date schedule)
-        // +1 accept in admin db
+        //update status in user  and admin db (after date schedule)
+        setIsAccepted(true);
     }
 
     const declineRequest = () => {
-        console.log("Clicked!");
-        //request is removed from dashboard (state change)
+        setIsDeclined(true);
+        //request is removed from dashboard (and db?)
         //update status in user db
-        // +1 decline in admin db
     }
 
     const handleLogout = () => {
@@ -73,8 +109,11 @@ const Dashboard = () => {
             <section className="requests">
                 <h2>Pending Requests</h2>
                 <div className="requests__pending">
-                    {donor.requests ? (
-                        donor.requests.map((request) => {
+                    {pendingRequests ? (
+                        pendingRequests.map((request) => {
+                            const currentDate = new Date();
+                            currentDate > request.expiration && setIsExpired(true);
+
                             return (
                                 <div className="requests__pending-item" key={index += 1}>
                                     <p>Location:{request.location}</p>
@@ -90,7 +129,6 @@ const Dashboard = () => {
                                 </div>
                             )
                         })
-
                     ) : (
                         <p>No requests at the moment</p>
                     )}
@@ -98,25 +136,46 @@ const Dashboard = () => {
 
                 <div className="requests__accepted">
                     <h2>Accepted Requests</h2>
+                    {acceptedRequests ? (
+                        acceptedRequests.map((request) => {
+                            return (
+                                <div className="requests__accepted-item" key={index += 1}>
+                                    <p>Location:{request.location}</p>
+                                    <p>Description:{request.description}</p>
+                                    <p>Blood Group:{request.group}</p>
+                                    <p>Rhesus:{request.rhesus}</p>
+                                    <p>Valid until: {request.expiration}</p>
+                                    {/*show scheduled date, and option to reschedule/cancel*/}
+                                </div>
+                            )
+                        })
+                    ) : (
+                        <p>You haven't accepted any requests yet</p>
+                    )}
                     {/*                        
                         on set date, remind donor 
                         confirm donation 1 day after set date
                         if donation confirmed (on both ends), update status to completed
                         if date missed, but request still valid, option to reschedule or cancel
-                        if canceled or request expired, update db status to cancelled
-                        remove item if status == canceled or completed 
+                        if canceled or request expired, update db status to cancelled 
                     */}
                 </div>
             </section>
 
             <section className="history">
                 <h2>Donation History</h2>
-                {/*map data from firestore*/}
-                <div className="history__item">
-                    <p>Location:</p>
-                    <p>Description:</p>
-                    <p>Donated on:</p>
-                </div>
+                {completedRequests ? (
+                    completedRequests.map((request) => {
+                        return (
+                            <div className="history-item" key={index += 1}>
+                                <p>Location:{request.location}</p>
+                                <p>Description:{request.description}</p>
+                                <p>Donated on:</p>
+                            </div>
+                        )
+                    })) : (
+                    <p>No confirmed donation history</p>
+                )}
             </section>
 
             <button onClick={handleLogout}>Logout</button>
