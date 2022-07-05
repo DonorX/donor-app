@@ -17,6 +17,7 @@ const AdminDashboard = () => {
     const [collectionId, setCollectionId] = useState('');
     const [newRequest, setNewRequest] = useState(false);
     const history = useHistory();
+    let index = 0;
 
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
@@ -123,15 +124,16 @@ const AdminDashboard = () => {
                     {admin.requests ? (
                         admin.requests.map((request) => {
                             return (
-                                <div className="requests__running-item">
+                                <div className="requests__running-item" key={index += 1}>
                                     <p>Location:{request.location}</p>
                                     <p>Description:{request.description}</p>
                                     <p>Blood Group:{request.group}</p>
                                     <p>Rhesus:{request.rhesus}</p>
                                     <p>Valid until: {request.expiration}</p>
-                                    {/*show donor appointments*/}
-                                    <p>Interested Donors:</p>
-                                    {/*confirm due appointments*/}
+                                    <div className="responses">
+                                        <h3>Interested Donors:</h3>
+                                        {/*confirm due appointments*/}
+                                    </div>
                                 </div>
                             )
                         })
