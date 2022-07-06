@@ -11,7 +11,6 @@ const Dashboard = () => {
     const [pendingRequests, setPendingRequests] = useState([]);
     const [acceptedRequests, setAcceptedRequests] = useState([]);
     const [completedRequests, setCompletedRequests] = useState([]);
-    const [expiredRequests, setExpiredRequests] = useState(false);
 
     const history = useHistory();
     let index = 0;
@@ -43,7 +42,6 @@ const Dashboard = () => {
 
     useEffect(() => {
         const requests = donor.requests;
-        const currentDate = new Date();
 
         const filterRequests = () => {
             if (requests.length >= 1) {
@@ -63,14 +61,9 @@ const Dashboard = () => {
                     return item.isCompleted === true
                 });
 
-                let expiredArray = requests.filter((item) => {                  
-                    return currentDate > item.expiration;
-                });
-
                 setPendingRequests(pendingArray);
                 setAcceptedRequests(acceptedArray);
                 setCompletedRequests(completedArray);
-                setExpiredRequests(expiredArray);
             }
         }
 
@@ -84,6 +77,7 @@ const Dashboard = () => {
 
     const acceptRequest = () => {
         setIsAccepted(true);
+        //change db status
     }
 
     const declineRequest = () => {

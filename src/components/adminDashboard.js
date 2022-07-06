@@ -10,12 +10,16 @@ const AdminDashboard = () => {
         group: '',
         rhesus: '',
         expiration: new Date(),
-        isExpired: false
+        isExpired: false,
+        isAccepted: false,
+        isCompleted: false
     });
 
     const [admin, setAdmin] = useState({});
     const [collectionId, setCollectionId] = useState('');
     const [newRequest, setNewRequest] = useState(false);
+    const [currentRequests, setCurrentRequests] = useState([]);
+
     const history = useHistory();
     let index = 0;
 
@@ -35,6 +39,28 @@ const AdminDashboard = () => {
         })
     }, [admin, history])
 
+    useEffect(() => {
+        const requests = admin.requests;
+        const currentDate = new Date();
+
+        const filterRequests = () => {
+            if (requests.length >= 1) { 
+                let currentArray = requests.filter((item) => {
+                    return item.isExpired === false
+                });
+
+                let expiredArray = requests.filter((item) => {                  
+                    return currentDate > item.expiration;
+                });
+
+                setCurrentRequests(currentArray);
+            }
+        }
+
+        filterRequests();
+    }, [admin.requests])
+
+    
     const editProfile = () => {
         console.log("Clicked!");
     }
@@ -121,8 +147,8 @@ const AdminDashboard = () => {
             <section className="requests">
                 <div className="requests__running">
                     <h2>Current Requests</h2>
-                    {admin.requests ? (
-                        admin.requests.map((request) => {
+                    {currentRequests ? (
+                        currentRequests.map((request) => {
                             return (
                                 <div className="requests__running-item" key={index += 1}>
                                     <p>Location:{request.location}</p>
