@@ -34,6 +34,9 @@ const Dashboard = () => {
                     .then((querySnapshot) => {
                         setDonor(querySnapshot.docs[0].data())
                     })
+                    .catch((err) => {
+                        console.log(err)
+                    });
             } else {
                 history.push('/login')
             }
@@ -44,30 +47,28 @@ const Dashboard = () => {
         const requests = donor.requests;
 
         const filterRequests = () => {
-            if (requests.length >= 1) {
-                let pendingArray = requests.filter((item) => {
-                    return item.isExpired === false
-                        && item.isAccepted === false
-                        && item.isCompleted === false
-                });
+            let pendingArray = requests.filter((item) => {
+                return item.isExpired === false
+                    && item.isAccepted === false
+                    && item.isCompleted === false
+            });
 
-                let acceptedArray = requests.filter((item) => {
-                    return item.isExpired === false
-                        && item.isAccepted === true
-                        && item.isCompleted === false
-                });
+            let acceptedArray = requests.filter((item) => {
+                return item.isExpired === false
+                    && item.isAccepted === true
+                    && item.isCompleted === false
+            });
 
-                let completedArray = requests.filter((item) => {
-                    return item.isCompleted === true
-                });
+            let completedArray = requests.filter((item) => {
+                return item.isCompleted === true
+            });
 
-                setPendingRequests(pendingArray);
-                setAcceptedRequests(acceptedArray);
-                setCompletedRequests(completedArray);
-            }
+            setPendingRequests(pendingArray);
+            setAcceptedRequests(acceptedArray);
+            setCompletedRequests(completedArray);
         }
 
-        filterRequests();
+        requests && filterRequests();
     }, [donor.requests])
 
 
