@@ -16,7 +16,11 @@ const AdminDashboard = () => {
     const [admin, setAdmin] = useState({});
     const [collectionId, setCollectionId] = useState('');
     const [newRequest, setNewRequest] = useState(false);
+    const [currentRequests, setCurrentRequests] = useState([]);
+    const [expiredRequests, setExpiredRequests] = useState([]);
+
     const history = useHistory();
+    let index = 0;
 
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
@@ -28,11 +32,55 @@ const AdminDashboard = () => {
                         setAdmin(querySnapshot.docs[0].data())
                         setCollectionId(querySnapshot.docs[0].id)
                     })
+                    .catch((err) => {
+                        console.log(err)
+                    })
             } else {
                 history.push('/login')
             }
         })
     }, [admin, history])
+
+    useEffect(() => {
+        const requests = admin.requests;
+        const currentDate = new Date();
+
+        const checkExpiredRequests = async () => {
+            let expiredItems = await requests.filter((item) => {
+                return item.isExpired === false
+                    && currentDate > item.expiration;
+            });
+
+            await expiredItems.forEach((item) => {
+                db.collection('admin')
+                    .doc(collectionId)
+                    .update({
+                        [`requests.${item.key}.isExpired`]: "true"
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            })
+
+            filterRequests();
+        }
+
+        const filterRequests = () => {
+            let currentArray = requests.filter((item) => {
+                return item.isExpired === false
+            });
+
+            let expiredArray = requests.filter((item) => {
+                return item.isExpired === true
+            });
+
+            setCurrentRequests(currentArray);
+            setExpiredRequests(expiredArray);
+        }
+
+        requests && checkExpiredRequests();
+    }, [admin.requests, collectionId])
+
 
     const editProfile = () => {
         console.log("Clicked!");
@@ -50,11 +98,16 @@ const AdminDashboard = () => {
         db.collection('donors')
             .doc(docId)
             .update({
-                requests: firebase.firestore.FieldValue.arrayUnion(request)
+                requests: firebase.firestore.FieldValue.arrayUnion({
+                    ...request,
+                    isAccepted: false,
+                    isDeclined: false,
+                    isCompleted: false,
+                    author: admin.name
+                })
             })
             .catch((error) => {
                 console.log(error)
-                // throw new Error(error)
             });
     }
 
@@ -82,22 +135,16 @@ const AdminDashboard = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         //prevent submission if expiry date is invalid
-        /*const currentDate = new Date();
-        currentDate < request.expiration && setRequest({
-            ...request, isExpired : true 
-        });*/
 
         //add request to db
         db.collection('admin')
             .doc(collectionId)
             .update({
-                requests: firebase.firestore.FieldValue.arrayUnion(request)
+                requests: firebase.firestore.FieldValue.arrayUnion({ request })
             })
             .catch((error) => {
                 console.log(error)
-                throw new Error(error)
             });
 
         //filter viable donors and send out requests
@@ -110,7 +157,7 @@ const AdminDashboard = () => {
         <main>
             <h1>Dashboard</h1>
             <section className="profile">
-            <h2>User Profile</h2>
+                <h2>User Profile</h2>
                 <p>Welcome, {admin.name}.</p>
                 <p>Email: {admin.email}.</p>
                 <p>Location: {admin.location}.</p>
@@ -120,15 +167,27 @@ const AdminDashboard = () => {
             <section className="requests">
                 <div className="requests__running">
                     <h2>Current Requests</h2>
-                    {/*map data from firestore*/}
-                    <div className="requests__running-item">
-                        <p>Location:</p>
-                        <p>Description:</p>
-                        <p>Valid until:</p>
-                        {/*show donor appointments*/}
-                        <p>Interested Donors:</p>
-                        {/*confirm due appointments*/}
-                    </div>
+                    {currentRequests ? (
+                        currentRequests.map((request) => {
+                            return (
+                                <div className="requests__running-item" key={index += 1}>
+                                    <p>Location:{request.location}</p>
+                                    <p>Description:{request.description}</p>
+                                    <p>Blood Group:{request.group}</p>
+                                    <p>Rhesus:{request.rhesus}</p>
+                                    <p>Valid until: {request.expiration}</p>
+                                    <div className="responses">
+                                        <p>Interested Donors:</p>
+                                        {/*confirm due appointments*/}
+                                        {/*set canceled requests to expired*/}
+                                    </div>
+                                    <button>Cancel Request</button>
+                                </div>
+                            )
+                        })
+                    ) : (
+                        <p>No requests at the moment</p>
+                    )}
                     <button onClick={createRequest}>New Request</button>
                 </div>
 
@@ -166,7 +225,24 @@ const AdminDashboard = () => {
                 )}
             </section>
 
-            <section className="history"></section>
+            <section className="history">
+                {expiredRequests ? (
+                    expiredRequests.map((request) => {
+                        return (
+                            <div className="history-item" key={index += 1}>
+                                <p>Location:{request.location}</p>
+                                <p>Description:{request.description}</p>
+                                <p>Blood Group:{request.group}</p>
+                                <p>Rhesus:{request.rhesus}</p>
+                                <p>Expired: {request.expiration}</p>
+                            </div>
+                        )
+                    })
+
+                ) : (
+                    <p>No expired donation requests yet</p>
+                )}
+            </section>
         </main>
     )
 }
